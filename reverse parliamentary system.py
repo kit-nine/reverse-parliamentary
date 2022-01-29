@@ -281,7 +281,7 @@ def more_gens(gens):
     # LAWMAKING
 def lawmaking(LEG, EXE):
     global vetoed
-    #functions
+    # functions
     def law_func():
         nonlocal type
         global vetoed
