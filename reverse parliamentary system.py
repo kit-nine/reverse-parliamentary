@@ -25,6 +25,7 @@ import random
 # media influence can skew the voting by a certain amount - manual input
 # law creation is skewed toward the position of the legislative 
 # another voting session or the VP instead of a randint for the tiebreaker
+# a set amount of laws per generation - manual input or a set amount can be built in
 
     # IMPLEMENTED ADDITIONAL NOTES
 # more_gens() will have parameter gens, set it equal to the number of gens to test minus one - manual input
@@ -456,13 +457,13 @@ def run():
 def fail_check():
     global fails
     global successes
-    if constitutional == True:
-        successes.append(1)
-    else:
-        if vetoed == True:
-            successes.append(1)
-        else:
-            fails.append(1)
+    if constitutional == True:  # if the law is constitutional
+        successes.append(1)     # add a success
+    else:                       # otherwise
+        if vetoed == True:      # if the law has been vetoed (soon vetoed laws wont be allowed as the code should remake that law each generation)
+            successes.append(1) # add a success
+        else:                   # otherwise
+            fails.append(1)     # add a failure
 
 successes = []
 fails = []
