@@ -281,11 +281,7 @@ def more_gens(gens):
     # LAWMAKING
 def lawmaking(LEG, EXE):
     global vetoed
-<<<<<<< Updated upstream
-    # functions
-=======
     #functions
->>>>>>> Stashed changes
     def law_func():
         nonlocal type
         global vetoed
@@ -312,27 +308,6 @@ def lawmaking(LEG, EXE):
         elif previous_law == 6:             # if the previous law was 6
             law = 5                         # they make a law that is 5
         elif previous_law == 5:             # if the previous law was 5
-<<<<<<< Updated upstream
-            law_votes_4 = []                # declares the list that will contain the votes
-            for i in range(535):            # each person in the legislature
-                law_vote_4 = random.randint(0,1)    # votes either 0 or 1
-                law_votes_4.append(law_vote_4)      # appends those votes to the law_votes_4 list of votes
-            if law_votes_4.count(0) > law_votes_4.count(1):   # if there are more votes for 0 than for 1
-                law = 4                 # they make a law that is 4
-            else:                       # if there are not more votes for 0 than for 1
-                law = 5                 # they make a law that is 5
-                continue_current_law = False    # and they wont make another law based on this one
-        elif previous_law == 4:             # if the previous law was 4
-            law_votes_5 = []                # declares the list that will contain the votes
-            for i in range(535):            # each person in the legislature
-                law_vote_5 = random.randint(0,1)    # votes either 0 or 1
-                law_votes_5.append(law_vote_5)      # appends those votes to the law_votes_5 list of votes
-            if law_votes_5.count(0) > law_votes_5.count(1):   # if there are more votes for 0 than for 1
-                law = 5                 # they make a law that is 5
-            else:                       # if there are not more votes for 0 than for 1
-                law = 4                 # they make a law that is 4
-                continue_current_law = False    # and they wont make another law based on this one
-=======
             law_votes_4 = []                # makes a list for votes
             for i in range(535):            # each person in the legislature
                 law_vote_4 = random.randint(0,1)    # votes either 0 or 1
@@ -352,7 +327,6 @@ def lawmaking(LEG, EXE):
                 else:                       # if there are not more votes for 0 than for 1
                     law = 4                 # they make a law that is 4
                     continue_current_law = False    # and they wont make another law based on this one
->>>>>>> Stashed changes
         elif previous_law == 3:             # if the previous law was 3
             law = 4                         # they make a law that is 4
         elif previous_law == 2:             # if the previous law was 2
@@ -366,35 +340,18 @@ def lawmaking(LEG, EXE):
         # vetos or passes law based on exe_line
         if type == "A":                                                 # if LEG is 0 through 4
             if law <= exe_line:                                         # and the law is lower than the deciding line
-<<<<<<< Updated upstream
-                # print("Law: ", law, "\nEXE: ", EXE, "\nVETOED") # prints the law, the EXE pos, and that it was vetoed
-=======
->>>>>>> Stashed changes
                 vetoed = True                                           # sets vetoed = True
                 print("Law: ", law, "\n", "EXE: ", EXE, "\n", "VETOED") # prints the law, the EXE pos, and that it was vetoed
             else:                                                       # if LEG is 0 through 4 but the law is not lower than the deciding line
-<<<<<<< Updated upstream
-                # print("Law: ", law, "\nEXE: ", EXE, "\nPASSED") # prints the law, the EXE pos, and that it was passed
-=======
->>>>>>> Stashed changes
                 vetoed = False                                          # sets vetoed = False
                 print("Law: ", law, "\n", "EXE: ", EXE, "\n", "PASSED") # prints the law, the EXE pos, and that it was passed
         else:                                                           # if LEG is not 0 through 4 (and therefore is 5 through 9)
             if law >= exe_line:                                         # and the law is lower than the deciding line
-<<<<<<< Updated upstream
-                # print("Law: ", law, "\nEXE: ", EXE, "\nVETOED") # prints the law, the EXE pos, and that it was vetoed
-=======
->>>>>>> Stashed changes
                 vetoed = True                                           # sets vetoed = True
                 print("Law: ", law, "\n", "EXE: ", EXE, "\n", "VETOED") # prints the law, the EXE pos, and that it was vetoed
             else:                                                       # if LEG is 0 through 4 but the law is not lower than the deciding line
-<<<<<<< Updated upstream
-                # print("Law: ", law, "\nEXE: ", EXE, "\nPASSED") # prints the law, the EXE pos, and that it was passed
-                vetoed = False                                          # sets vetoed = False
-=======
                 vetoed = False                                          # sets vetoed = False
                 print("Law: ", law, "\n", "EXE: ", EXE, "\n", "PASSED") # prints the law, the EXE pos, and that it was passed
->>>>>>> Stashed changes
         unveto()
     def jud_func():
         global constitutional
@@ -433,20 +390,12 @@ def lawmaking(LEG, EXE):
                     jud_votes.append(1)             # vote is constitutional
         if jud_votes.count(0) > jud_votes.count(1): # if vote is unconstitutional
             previous_law = law                      # this law becomes the previous law
-<<<<<<< Updated upstream
-            #print("unconstitutional, making new law:")  # prints "unconstitutional, making new law:"
-            law_func()                              # they'll make a new law with the previous one in mind
-        else:                                       # if vote is not unconsititutional
-            #print("law constitutional")             # prints "constitutional"
-            constitutional = True
-=======
             constitutional = False
             print("unconstitutional")
             law_func()                              # they'll make a new law with the previous one in mind
         else:                                       # if vote is not unconsititutional
             constitutional = True
             print("law constitutional")
->>>>>>> Stashed changes
     def unveto():
         global vetoed
         nonlocal previous_law
@@ -459,35 +408,6 @@ def lawmaking(LEG, EXE):
                     unveto_votes.append(unveto_vote)    # append that vote to unveto_votes
                 if unveto_votes.count(0) >= 356:        # if more than 2/3 of the legislative vote for the unveto
                     vetoed = False                      # unvetoed
-<<<<<<< Updated upstream
-                    # print("unvetoed")                 # prints "unvetoed"
-                    jud_func()                          # calls the judicial system in
-                else:                                   # if more than 2/3 of the legislative doesnt vote for the unveto
-                    if continue_current_law == True:    # if they're supposed to continue with this law and make it again but more centrist
-                        previous_law = law              # this law becomes the previous law
-                        # print("new law should be made now:")    # prints "new law should be made now:"
-                        law_func()                      # they'll make a new law with the previous one in mind
-                    else:                               # if they arent supposed to continue with this law
-                        previous_law = 10               # previous law is ignored, basically restarting lawmaking()
-                        # print("new law not based on this one should be made now:")    # prints that
-                        law_func()                      # they'll make a new law without the previous one in mind
-            else:                                       # if it's not 0, they won't vote to unveto
-                if continue_current_law == True:        # if they're supposed to continue with this law and make it again but more centrist
-                    previous_law = law                  # this law becomes the previous law
-                    # print("new law should be made now:")    # prints "new law should be made now:"
-                    law_func()                          # they'll make a new law with the previous one in mind
-                else:                                   # if they arent supposed to continue with this law
-                    previous_law = 10                   # previous law is ignored, basically restarting lawmaking()
-                    # print("new law not based on this one should be made now:")    # prints that
-                    law_func()                          # they'll make a new law without the previous one in mind
-        else:                                           # if the law was not vetoed
-            jud_func()                                  # calls the judicial system in
-    # variables
-    vetoed = False
-    continue_current_law = True
-    # the code first  has to determine whether this is an A scenario or a B scenario
-    # to make this simpler:
-=======
                     print("unvetoed")                   # prints "unvetoed"
                     jud_func()
             else:                                       # if it's not 0, they won't vote to unveto
@@ -506,35 +426,10 @@ def lawmaking(LEG, EXE):
     previous_law = 10
     law = 10
     # the code first determines whether this is an A scenario or a B scenario to make calculations simpler
->>>>>>> Stashed changes
     if LEG >= 0 and LEG <= 4:
         type = "A"
     elif LEG >= 5 and LEG <= 9:
         type = "B"
-<<<<<<< Updated upstream
-    print(type)
-    # now the code knows the scenario and can refer to that instead of computing
-    # the scenario out each time.
-    previous_law = 10
-    law = 10
-    # runs the function law_func
-    law_func()
-
-    # RUN
-def run():
-    constitutional = False
-    # print("\nGEN 1 :")
-    gen_1()
-    # print(leg_max_val_index_1[0],", ",exe_max_val_index_1[0])
-    lawmaking(LEG = leg_max_val_index_1[0], EXE = exe_max_val_index_1[0])
-    # print("\nGEN 2 :")
-    fail_check()
-    gen_2()
-    #print(leg_max_val_index_2[0],", ",exe_max_val_index_2[0])
-    lawmaking(LEG = leg_max_val_index_2[0], EXE = exe_max_val_index_2[0])
-    fail_check()
-    more_gens(gens = 48)
-=======
     # now the code knows the scenario and can refer to that instead of computing it out each time
     law_func()  # runs the function law
 
@@ -554,8 +449,8 @@ def run():
     lawmaking(LEG = leg_max_val_index_2[0], EXE = exe_max_val_index_2[0])   # passes constants LEG and EXE for this gen to lawmaking() and runs it
     fail_check()                                                            # runs fail_check() on gen_2() and its lawmaking()
     constitutional = False                                                  # resets constitutional
-    more_gens(gens = 9998)                                                    # runs more_gens() for the manually inputted amount of times
->>>>>>> Stashed changes
+    more_gens(gens = 998)                                                    # runs more_gens() for the manually inputted amount of times
+
 
     # FAIL CHECKER
 def fail_check():
