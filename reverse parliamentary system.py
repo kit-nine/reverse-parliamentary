@@ -472,3 +472,5 @@ print("Gens:", len(generations))
 print("Fails:", len(fails))
 print("Successes:", len(successes))
 print("Successes are determined by seeing that all passed laws are deemed constitutional by the judicial branch.")
+
+# hihi
