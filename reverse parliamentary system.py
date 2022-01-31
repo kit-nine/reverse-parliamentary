@@ -1,4 +1,3 @@
-from hashlib import new
 import random
 
     # FIRST GENERATION OF PEOPLE
@@ -28,6 +27,7 @@ import random
 
     # IMPLEMENTED ADDITIONAL NOTES
 # more_gens() will have parameter gens, set it equal to the number of gens to test minus one - manual input
+
     # IMPLEMENTING CURRENTLY
 # the parents will survive 2 generations.
 # the parents will have a 2 out of 3 chance of voting the same every generation.
@@ -43,7 +43,6 @@ exe_counts = []
 gen_1_wins = []
 new_leg_votes = []
 new_exe_votes = []
-choice = 0
 gen_previous_parents = []
 gen_parents = []
 vetoed = False
@@ -87,7 +86,7 @@ def gen_1():
             count = exe_votes.count(i)      # see how many people voted for that option
             exe_counts.append(count)        # append that to the list
     else:                                   # if the legislative vote isn't 0 through 4
-        for i in range(0, 5):               # for each option (5 through 9)
+        for i in range(0, 5):               # for each option (0 through 4)
             count = exe_votes.count(i)      # see how many people voted for that option
             exe_counts.append(count)        # append that to the list
     exe_max_val = max(exe_counts)           # finds the one they voted for most
@@ -115,10 +114,9 @@ def gen_2():
     normalities = []
     researchers = []
     # since gen_2() votes differently, a for loop was simpler so i could be used for indexing
-    gen_parents.clear()                         # clears the parent relationship scores list for use
     for i in range(people_not_voted):           # for the number of people who havent yet voted
         normality = random.randint(0,3)         # determines whether the person will vote based on their parents or not
-        if normality == 0 or 1 or 2:            # if the person will vote based on their parents
+        if normality == 0 or normality == 1 or normality == 2:  # if the person will vote based on their parents
             parent_score = random.randint(0, 1) # determines whether their relationship with their parent is good or not
             x = leg_votes[i]                    # finds the parent's vote
             if parent_score == 0:               # if the parent relationship was bad,
@@ -126,17 +124,19 @@ def gen_2():
             else:                               # if the parent relationship was good,
                 choice = x                      # the choice is what the parent chose
         else:                                   # if the person will not vote based on their parents
-            choice = random.choice(leg_options) # the person chooses randomly
+            choice = int(random.choice(leg_options))    # the person chooses randomly
+            parent_score = random.randint(0, 1) # determines whether their relationship with their parent is good or not (makes indexing correct)
         normalities.append(normality)           # fills this list with normality scores
         new_leg_votes.append(choice)            # makes a list of the choices without resetting leg_votes
         gen_parents.append(parent_score)        # appends the parent relationship score for reuse
+
     # the parents are still alive so they also vote
     for i in range(len(gen_parents)):                   # for each parent
         research = random.randint(0,2)                  # determine whether they research their choice or just go with what they did last year
-        if research == 0 or 1:                          # if they will not research
+        if research == 0 or research == 1:              # if they will not research
             parent_choice = leg_votes[i]                # they vote for the same thing as they voted for last year
-        else:                                           # otherwise
-            parent_choice = random.choice(leg_options)  # they vote randomly
+        else:                                           # otherwise if they will research
+            parent_choice = int(random.choice(leg_options)) # they vote randomly
         new_leg_votes.append(parent_choice)             # appends their choice to new_leg_votes
         researchers.append(research)                    # fills this list with research scores
     leg_votes.clear()                                   # clears the old votes away
@@ -163,34 +163,33 @@ def gen_2():
 
     if 0 <= leg_max_val_index_2[0] <= 4:                # if the legislative is 0 through 4
         for i in range(people_not_voted):               # for the number of people who havent yet voted
-            if normalities[i] == 0 or 1 or 2:           # if the person will vote based on their parents
+            if normalities[i] == 0 or normalities[i] == 1 or normalities[i] == 2:   # if the person will vote based on their parents
                 x = exe_votes[i]                        # finds the parent's vote
-                if parent_score == 0:                   # if the parent relationship was bad,
+                if gen_parents[i] == 0:                   # if the parent relationship was bad,
                     if x >= 5:                          # if the parent vote was greater than 5
                         choice = abs(x - 14)            # choice is |x - 14| (|5 - 14| = 9, |6 - 14| = 8, |7 - 14| = 7)
                     else:                               # otherwise
-                        choice = x + abs(x - 9)         # choice is opposite of their parents
+                        choice = abs(x - 9)         # choice is opposite of their parents
                 else:                                   # if the parent relationship was not bad,
                     choice = x                          # the choice is what the parent chose
             else:                                       # if the person will not vote based on their parents
-                choice = random.choice(exe_options_2)   # the person chooses randomly
-        new_exe_votes.append(choice)                    # makes a list of the choices without resetting leg_votes
+                choice = int(random.choice(exe_options_2))  # the person chooses randomly
+            new_exe_votes.append(choice)                    # makes a list of the choices without resetting leg_votes
         # the parents are still alive so they also vote
-        for i in range(gen_parents):                        # for each parent
-            if research == 0 or 1:                          # if they will not research
+        for i in range(len(gen_parents)):                   # for each parent
+            if research == 0 or research == 1:              # if they will not research
                 parent_choice = exe_votes[i]                # they vote for the same thing as they voted for last year
             else:                                           # otherwise
-                parent_choice = random.choice(exe_options_2)# they vote randomly
+                parent_choice = int(random.choice(exe_options_2))   # they vote randomly
             new_exe_votes.append(parent_choice)             # appends their choice to new_leg_votes
         exe_votes.clear()                                   # clears the old votes away
         for i in new_exe_votes:                             # for each item in the new votes list
             exe_votes.append(i)                             # appends it to the votes list
-        gen_parents.clear()                                 # clears the parent relationship scores list for reuse
     else:                                               # if the legislative is not 0 through 4
         for i in range(people_not_voted):               # for the number of people who havent yet voted
-            if normalities[i] == 0 or 1 or 2:           # if the person will vote based on their parents
+            if normalities[i] == 0 or normalities[i] == 1 or normalities[i] == 2:   # if the person will vote based on their parents
                 x = exe_votes[i]                        # finds the parent's vote
-                if parent_score == 0:                   # if the parent relationship was bad,
+                if gen_parents[i] == 0:                   # if the parent relationship was bad,
                     if x >= 5:                          # if the parent vote was greater than 5
                         choice = abs(x - 4)             # choice is |x - 14| (|0 - 4| = 4, |1 - 4| = 3, |2 - 4| = 2)
                     else:                               # otherwise
@@ -198,20 +197,32 @@ def gen_2():
                 else:                                   # if the parent relationship was not bad,
                     choice = x                          # the choice is what the parent chose
             else:                                       # if the person will not vote based on their parents
-                choice = random.choice(exe_options_2)   # the person chooses randomly
+                choice = int(random.choice(exe_options_2))  # the person chooses randomly
         new_exe_votes.append(choice)                    # makes a list of the choices without resetting leg_votes
         # the parents are still alive so they also vote
-        for i in range(gen_parents):                        # for each parent
+        for i in range(len(gen_parents)):                        # for each parent
             if research == 0 or 1:                          # if they will not research
                 parent_choice = exe_votes[i]                # they vote for the same thing as they voted for last year
             else:                                           # otherwise
-                parent_choice = random.choice(exe_options_2)# they vote randomly
+                parent_choice = int(random.choice(exe_options_2))   # they vote randomly
             new_exe_votes.append(parent_choice)             # appends their choice to new_leg_votes
         exe_votes.clear()                                   # clears the old votes away
         for i in new_exe_votes:                             # for each item in the new votes list
             exe_votes.append(i)                             # appends it to the votes list
-        gen_parents.clear()                                 # clears the parent relationship scores list for reuse
-        
+
+    if 0 <= leg_max_val_index_1[0] <= 4:
+        for i in range(5, 10):
+            count = exe_votes.count(i)
+            exe_counts.append(count)
+    else:
+        for i in range(0, 5):
+            count = exe_votes.count(i)
+            exe_counts.append(count)
+
+    exe_max_val = max(exe_counts)
+    global exe_max_val_index_1
+    exe_max_val_index_1 = [i for i in range(len(exe_counts)) if exe_counts[i] == exe_max_val]
+
     exe_max_val = max(exe_counts)
     global exe_max_val_index_2
     exe_max_val_index_2 = [i for i in range(len(exe_counts)) if exe_counts[i] == exe_max_val]
@@ -228,8 +239,6 @@ def gen_2():
         exe_max_val_index_2[0] += 5
     leg_counts.clear()
     exe_counts.clear()
-    leg_votes.clear()
-    exe_votes.clear()
     return
 
     # GEN 3
@@ -243,7 +252,7 @@ def gen_3():
     gen_parents.clear()                 # clears gen_parents for reuse
     for i in range(people_not_voted):
         normality = random.randint(0,3)
-        if normality == 0 or 1 or 2:
+        if normality == 0 or normality == 1 or normality == 2:
             if gen_previous_parents[i] == 0:        # if the grandparents' relationship with the parents was bad
                 parent_score = random.randint(0,3)  # the parent score has a 3/4, rather than a 1/2, chance to also have a bad relationship with their kids
             elif gen_previous_parents[i] == 1:      # if the grandparents' relationship with the parents was good
@@ -254,13 +263,15 @@ def gen_3():
             else:
                 choice = x
         else:
-            choice = random.choice(leg_options)
+            choice = int(random.choice(leg_options))
         normalities.append(normality)
         new_leg_votes.append(choice)
+        gen_parents.clear()
+        gen_parents.append(parent_score)
 
-    for i in range(gen_parents):
+    for i in range(len(gen_parents)):
         research = random.randint(0,2)
-        if research == 0 or 1:
+        if research == 0 or research == 1:
             parent_choice = leg_votes[i]
         else:
             parent_choice = random.choice(leg_options)
@@ -269,8 +280,6 @@ def gen_3():
     leg_votes.clear()
     for i in new_leg_votes:
         leg_votes.append(i)
-    gen_parents.clear()
-    gen_parents.append(parent_score)
     for i in range(0, 9):
         count = leg_votes.count(i)
         leg_counts.append(count)
@@ -291,9 +300,9 @@ def gen_3():
                 
     if 0 <= leg_max_val_index_2[0] <= 4:
         for i in range(people_not_voted):
-            if normalities[i] == 0 or 1 or 2:
+            if normalities[i] == 0 or normalities[i] == 1 or normalities[i] == 2:
                 x = exe_votes[i]
-                if parent_score == 0:
+                if gen_parents[i] == 0:
                     if x >= 5:
                         choice = abs(x - 14)
                     else:
@@ -305,7 +314,7 @@ def gen_3():
         new_exe_votes.append(choice)
 
         for i in range(gen_parents):
-            if research == 0 or 1:
+            if research == 0 or research == 1:
                 parent_choice = exe_votes[i]
             else:
                 parent_choice = random.choice(exe_options_2)
@@ -316,9 +325,9 @@ def gen_3():
         gen_parents.clear()
     else:
         for i in range(people_not_voted):
-            if normalities[i] == 0 or 1 or 2:
+            if normalities[i] == 0 or normalities[i] == 1 or normalities[i] == 2:
                 x = exe_votes[i]
-                if parent_score == 0:
+                if gen_parents[i] == 0:
                     if x >= 5:
                         choice = abs(x - 4)
                     else:
@@ -330,7 +339,7 @@ def gen_3():
         new_exe_votes.append(choice)
 
         for i in range(gen_parents):
-            if research == 0 or 1:
+            if research == 0 or research == 1:
                 parent_choice = exe_votes[i]
             else:
                 parent_choice = random.choice(exe_options_2)
@@ -373,6 +382,7 @@ def gen_3():
 def more_gens(gens):
     for i in range(gens):
         global generations
+        global people_not_voted
         gen_3()
         current_gen = i + 3
         # print("\nGEN",current_gen,":")
@@ -380,6 +390,7 @@ def more_gens(gens):
         lawmaking(LEG = leg_max_val_index_3[0], EXE = exe_max_val_index_3[0])
         fail_check()
         generations.append(current_gen)
+        people_not_voted = 100
 
     # LAWMAKING
 def lawmaking(LEG, EXE):
@@ -511,15 +522,15 @@ def lawmaking(LEG, EXE):
                     unveto_votes.append(unveto_vote)    # append that vote to unveto_votes
                 if unveto_votes.count(0) >= 356:        # if more than 2/3 of the legislative vote for the unveto
                     vetoed = False                      # unvetoed
-                    print("unvetoed")                   # prints "unvetoed"
-                    jud_func()
+                    print("unvetoed")
+                    jud_func()                          # continue on to the judicial branch
             else:                                       # if it's not 0, they won't vote to unveto
                 if continue_current_law == True:        # if they're supposed to continue with this law and make it again but more centrist
                     previous_law = law                  # this law becomes the previous law
                     print("new law should be made now")
                     law_func()                          # they'll make a new law with the previous one in mind
         else:                                           # if the law was not vetoed
-            jud_func()                                  # continue onto the judicial branch
+            jud_func()                                  # continue on to the judicial branch
     # constants
     LEG = 0
     EXE = 7
@@ -539,6 +550,7 @@ def lawmaking(LEG, EXE):
     # RUN
 def run():
     global constitutional
+    global people_not_voted
     constitutional = False                                                  # resets constitutional
     print("\nGEN 1 :")
     gen_1()                                                                 # runs gen_1()
@@ -547,12 +559,14 @@ def run():
     print("\nGEN 2 :")
     fail_check()                                                            # runs fail_check() on gen_1() and its lawmaking()
     constitutional = False                                                  # resets constitutional
+    people_not_voted = 100                                                  # resets people
     gen_2()                                                                 # runs gen_2()
     print(leg_max_val_index_2[0],", ",exe_max_val_index_2[0])
     lawmaking(LEG = leg_max_val_index_2[0], EXE = exe_max_val_index_2[0])   # passes constants LEG and EXE for this gen to lawmaking() and runs it
     fail_check()                                                            # runs fail_check() on gen_2() and its lawmaking()
     constitutional = False                                                  # resets constitutional
-    more_gens(gens = 998)                                                    # runs more_gens() for the manually inputted amount of times
+    people_not_voted = 100                                                  # resets people
+    more_gens(gens = 998)                                                   # runs more_gens() for the manually inputted amount of times
 
     # FAIL CHECKER
 def fail_check():
@@ -574,5 +588,3 @@ print("Gens:", len(generations))
 print("Fails:", len(fails))
 print("Successes:", len(successes))
 print("Successes are determined by seeing that all passed laws are deemed constitutional by the judicial branch.")
-
-gen_2()
