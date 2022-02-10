@@ -46,6 +46,7 @@ new_exe_votes = []
 gen_previous_parents = []
 gen_parents = []
 vetoed = False
+current_gen = 0
 
     # GEN 1
 def gen_1():
@@ -199,7 +200,7 @@ def gen_2():
         for i in range(people_not_voted):               # for the number of people who havent yet voted
             if normalities[i] == 0 or normalities[i] == 1 or normalities[i] == 2:   # if the person will vote based on their parents
                 x = exe_votes[i]                        # finds the parent's vote
-                if gen_parents[i] == 0:                   # if the parent relationship was bad,
+                if gen_parents[i] == 0:                 # if the parent relationship was bad,
                     if x >= 5:                          # if the parent vote was greater than 5
                         choice = abs(x - 4)             # choice is |x - 14| (|0 - 4| = 4, |1 - 4| = 3, |2 - 4| = 2)
                     else:                               # otherwise
@@ -326,7 +327,7 @@ def gen_3():
             new_exe_votes.append(choice)
 
         for i in range(len(gen_parents)):
-            if research == 0 or research == 1:
+            if researchers[i] == 0 or researchers[i] == 1:
                 parent_choice = exe_votes[i]
             else:
                 parent_choice = random.choice(exe_options_2)
@@ -349,7 +350,7 @@ def gen_3():
             new_exe_votes.append(choice)
 
         for i in range(len(gen_parents)):
-            if research == 0 or research == 1:
+            if researchers[i] == 0 or researchers[i] == 1:
                 parent_choice = exe_votes[i]
             else:
                 parent_choice = random.choice(exe_options_2)
@@ -384,18 +385,21 @@ def gen_3():
         exe_max_val_index_3[0] += 5
     leg_counts.clear()
     exe_counts.clear()
+    new_leg_votes.clear()
+    new_exe_votes.clear()
     people_not_voted = 100
     return
 
     # MORE GENS
 def more_gens(gens):
-    for i in range(gens):
-        global generations
-        global people_not_voted
+    global current_gen
+    global generations
+    global people_not_voted
+    for i in range(gens - 2):
         gen_3()
         current_gen = i + 3
-        # print("\nGEN",current_gen,":")
-        # print(leg_max_val_index_3[0],", ",exe_max_val_index_3[0], "\n")
+        print("\nGEN",current_gen,":")
+        print(leg_max_val_index_3[0],", ",exe_max_val_index_3[0], "\n")
         lawmaking(LEG = leg_max_val_index_3[0], EXE = exe_max_val_index_3[0])
         fail_check()
         generations.append(current_gen)
@@ -464,18 +468,19 @@ def lawmaking(LEG, EXE):
         if type == "A":                                                 # if LEG is 0 through 4
             if law <= exe_line:                                         # and the law is lower than the deciding line
                 vetoed = True                                           # sets vetoed = True
-                print("Law: ", law, "\n", "EXE: ", EXE, "\n", "VETOED") # prints the law, the EXE pos, and that it was vetoed
             else:                                                       # if LEG is 0 through 4 but the law is not lower than the deciding line
                 vetoed = False                                          # sets vetoed = False
-                print("Law: ", law, "\n", "EXE: ", EXE, "\n", "PASSED") # prints the law, the EXE pos, and that it was passed
         else:                                                           # if LEG is not 0 through 4 (and therefore is 5 through 9)
             if law >= exe_line:                                         # and the law is lower than the deciding line
                 vetoed = True                                           # sets vetoed = True
-                print("Law: ", law, "\n", "EXE: ", EXE, "\n", "VETOED") # prints the law, the EXE pos, and that it was vetoed
             else:                                                       # if LEG is 0 through 4 but the law is not lower than the deciding line
                 vetoed = False                                          # sets vetoed = False
-                print("Law: ", law, "\n", "EXE: ", EXE, "\n", "PASSED") # prints the law, the EXE pos, and that it was passed
+        if vetoed == False:
+            print("Law: ", law, "\n", "EXE: ", EXE, "\n", "PASSED") # prints the law, the EXE pos, and that it was passed
+        else:
+            print("Law: ", law, "\n", "EXE: ", EXE, "\n", "VETOED") # prints the law, the EXE pos, and that it was vetoed
         unveto()
+
     def jud_func():
         global constitutional
         nonlocal previous_law
@@ -519,9 +524,11 @@ def lawmaking(LEG, EXE):
         else:                                       # if vote is not unconsititutional
             constitutional = True
             print("law constitutional")
+
     def unveto():
         global vetoed
         nonlocal previous_law
+        nonlocal continue_current_law
         if vetoed == True:                              # if the law was vetoed
             vote_time = random.randint(0,1)             # decides whether they're going to vote to unveto
             if vote_time == 0:                          # if it's 0, they'll vote to unveto
@@ -533,11 +540,10 @@ def lawmaking(LEG, EXE):
                     vetoed = False                      # unvetoed
                     print("unvetoed")
                     jud_func()                          # continue on to the judicial branch
-            else:                                       # if it's not 0, they won't vote to unveto
-                if continue_current_law == True:        # if they're supposed to continue with this law and make it again but more centrist
-                    previous_law = law                  # this law becomes the previous law
-                    print("new law should be made now")
-                    law_func()                          # they'll make a new law with the previous one in mind
+            if continue_current_law == True:        # if they're supposed to continue with this law and make it again but more centrist
+                previous_law = law                  # this law becomes the previous law
+                print("new law should be made now")
+                law_func()                          # they'll make a new law with the previous one in mind
         else:                                           # if the law was not vetoed
             jud_func()                                  # continue on to the judicial branch
     # constants
@@ -575,7 +581,7 @@ def run():
     fail_check()                                                            # runs fail_check() on gen_2() and its lawmaking()
     constitutional = False                                                  # resets constitutional
     people_not_voted = 100                                                  # resets people
-    more_gens(gens = 998)                                                   # runs more_gens() for the manually inputted amount of times
+    more_gens(gens = 1000000)                                                  # runs more_gens() for the manually inputted amount of times minus 2
 
     # FAIL CHECKER
 def fail_check():
@@ -584,16 +590,24 @@ def fail_check():
     if constitutional == True:  # if the law is constitutional
         successes.append(1)     # add a success
     else:                       # otherwise
-        if vetoed == True:      # if the law has been vetoed (soon vetoed laws wont be allowed as the code should remake that law each generation)
+        """if vetoed == True:      # if the law has been vetoed (soon vetoed laws wont be allowed as the code should remake that law each generation)
             successes.append(1) # add a success
-        else:                   # otherwise
-            fails.append(1)     # add a failure
+        else:                   # otherwise"""
+        fails.append(current_gen)   # tells the position of the failure(s)
 
 successes = []
 fails = []
 generations = [1, 2]
 run()
 print("Gens:", len(generations))
-print("Fails:", len(fails))
+if len(fails) == 1:
+    if fails[0] == 0:
+        print("Fails:", "0")
+    else:
+        print("Fails:", len(fails))
+else:
+    print("Fails:", len(fails))
+if len(fails) > 0:
+    print("Generations that failed:", fails)
 print("Successes:", len(successes))
 print("Successes are determined by seeing that all passed laws are deemed constitutional by the judicial branch.")
