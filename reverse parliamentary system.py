@@ -19,23 +19,43 @@ import random
 # same things are printed out
 
     # ADDITIONAL NOTES - may or may not actually implement
-#    otherwise they will randomly choose every time.
-# media influence can skew the voting by a certain amount - manual input
 # law creation is skewed toward the position of the legislative 
 # another voting session or the VP instead of a randint for the tiebreaker
 # a set amount of laws per generation - manual input or a set amount can be built in
+# go through entire legislative process rather than just simple voting
+# full political compass; left-right and libertarian-authoritarian
+# get rid of global variables
 
     # IMPLEMENTED ADDITIONAL NOTES
 # more_gens() will have parameter gens, set it equal to the number of gens to test minus one - manual input
-
-    # IMPLEMENTING CURRENTLY
 # the parents will survive 2 generations.
 # the parents will have a 2 out of 3 chance of voting the same every generation.
+#    otherwise they will randomly choose every time.
+
+    # IMPLEMENTING CURRENTLY
+# media influence can skew the voting by a certain amount - manual input
+
+# media influence custom random function with skew
+def skew(influence, type, range1, range2):    # influence should be a float between -1 and 1, including 0; type should be a string, either "bool" or "int", range1 and range2 should form the range that should be randomly picked from
+    if type == "bool":
+        skew_bool = 0.0
+        skew_bool += influence
+        skew_bool = int(skew_bool)
+        return skew_bool
+    elif type == "int":
+        skew_int = random.randint(range1, range2)
+        if influence > 0 and skew_int != range2:
+            skew_int += influence * (range2 - 1)
+        elif influence < 0 and skew_int != range1:
+            skew_int += influence * (range1 + 1)
+        if skew_int < range1:
+            skew_int = range1
+        elif skew_int > range2:
+            skew_int = range2
+        skew_int = int(skew_int)
+        return skew_int
 
 people_not_voted = 100
-leg_options = "0123456789"
-exe_options_1 = "01234"
-exe_options_2 = "56789"
 leg_votes = []
 leg_counts = []
 exe_votes = []
@@ -47,30 +67,33 @@ gen_previous_parents = []
 gen_parents = []
 vetoed = False
 current_gen = 0
+leg_max_val_index_1 = []
+exe_max_val_index_1 = []
 
     # GEN 1
 def gen_1():
-    global people_not_voted     # I know this is a code smell but I could not figure anything else out
+    global people_not_voted
     global exe_votes
     global leg_votes
     global gen_parents
     global gen_previous_parents
+    global leg_max_val_index_1
+    global exe_max_val_index_1
     # this makes the people vote for the legislative branch
     while people_not_voted > 0:                     # while any amount of people havent voted
-        choice = int(random.choice(leg_options))    # have them vote 0-9
+        choice = skew(influence, "int", 0, 9)       # have them vote 0-9
         leg_votes.append(choice)                    # append their choice to the votes list
         people_not_voted -= 1                       # subtract one person because they just voted
     # this finds out how many people voted for each option
-    for i in range(0, 9):           # for each option
+    for i in range(0, 10):           # for each option
         count = leg_votes.count(i)  # see how many people voted for that option
         leg_counts.append(count)    # append that to the list
     leg_max_val = max(leg_counts)   # finds the one they voted for the most
-    global leg_max_val_index_1      # so the code can use leg_max_val_index_1 later
     leg_max_val_index_1 = [i for i in range(len(leg_counts)) if leg_counts[i] == leg_max_val]   # this indexes the maximum value(s), which i use to find what the largest vote was for
     # this narrows it down to one winner incase there's a tie
     for i in range(len(leg_max_val_index_1)):       # for the length of the list of max value(s)
         while len(leg_max_val_index_1) > 1:         # while it's more than one
-            delete = bool(random.getrandbits(1))    # delete = True / False
+            delete = skew(influence, "bool", 0, 0)  # delete = True / False
             if delete == True:                      # if delete == True
                 del leg_max_val_index_1[i]          # deletes the first value in the list
             else:                                   # if delete != True
@@ -78,12 +101,10 @@ def gen_1():
     people_not_voted = 100      # resets the people for the next voting session
     # this makes the people vote for the executive branch
     while people_not_voted > 0:                         # while any amount of people havent voted
-        if 4 < leg_max_val_index_1[0] < 9:              # if the legislative vote is 5 through 9
-            choice = int(random.choice(exe_options_1))  # the people are only allowed to vote from exe_options_1
-            exe_votes.append(choice)                    # appends their choice to the votes list
-        elif 0 < leg_max_val_index_1[0] < 5:            # if the legislative vote is 0 through 4
-            choice = int(random.choice(exe_options_2))  # the people are only allowed to vote from exe_options_2
-            exe_votes.append(choice)                    # appends their choice to the votes list
+        choice = skew(influence, "int", 0, 4)           # the people vote for the executive 0 through 4
+        if 0 < leg_max_val_index_1[0] < 5:            # if the legislative vote is 0 through 4
+            choice += 5                                 # the people add 5 to their votes, making them actually vote for the executive 5 through 9
+        exe_votes.append(choice)                    # appends their choice to the votes list
         people_not_voted -= 1                           # subtract one person because they just voted
     # finds out how many people voted for each option without pesky '0's from the other half of the spectrum
     if 0 <= leg_max_val_index_1[0] <= 4:    # if the legislative vote is 0 through 4
@@ -95,12 +116,11 @@ def gen_1():
             count = exe_votes.count(i)      # see how many people voted for that option
             exe_counts.append(count)        # append that to the list
     exe_max_val = max(exe_counts)           # finds the one they voted for most
-    global exe_max_val_index_1              # so the code can use exe_max_val_index_1 later
     exe_max_val_index_1 = [i for i in range(len(exe_counts)) if exe_counts[i] == exe_max_val]   # this indexes the maximum value(s), which i use to find what the largest vote was for
     # this narrows it down to one winner incase there's a tie
     for i in range(len(exe_max_val_index_1)):       # for the length of the list of max value(s)
         while len(exe_max_val_index_1) > 1:         # while it's more than one
-            delete = bool(random.getrandbits(1))    # delete = True / False
+            delete = skew(influence, "bool", 0, 0)    # delete = True / False
             if delete == True:                      # if delete == True
                 del exe_max_val_index_1[i]          # deletes the first value in the list
             else:                                   # if delete != True
@@ -113,7 +133,7 @@ def gen_1():
     exe_counts.clear()
     # resets this variable so it can be reused
     people_not_voted = 100
-    return
+    return leg_max_val_index_1, exe_max_val_index_1
 
     # GEN 2
 def gen_2():
@@ -581,7 +601,7 @@ def run():
     fail_check()                                                            # runs fail_check() on gen_2() and its lawmaking()
     constitutional = False                                                  # resets constitutional
     people_not_voted = 100                                                  # resets people
-    more_gens(gens = 1000000)                                                  # runs more_gens() for the manually inputted amount of times minus 2
+    more_gens(gens = 1000)                                                  # runs more_gens() for the manually inputted amount of times minus 2
 
     # FAIL CHECKER
 def fail_check():
@@ -590,11 +610,9 @@ def fail_check():
     if constitutional == True:  # if the law is constitutional
         successes.append(1)     # add a success
     else:                       # otherwise
-        """if vetoed == True:      # if the law has been vetoed (soon vetoed laws wont be allowed as the code should remake that law each generation)
-            successes.append(1) # add a success
-        else:                   # otherwise"""
         fails.append(current_gen)   # tells the position of the failure(s)
 
+"""
 successes = []
 fails = []
 generations = [1, 2]
@@ -611,3 +629,37 @@ if len(fails) > 0:
     print("Generations that failed:", fails)
 print("Successes:", len(successes))
 print("Successes are determined by seeing that all passed laws are deemed constitutional by the judicial branch.")
+"""
+
+influence = 0.1
+legs = []
+exes = []
+def test(times):
+    global leg_max_val_index_1
+    global exe_max_val_index_1
+    for i in range(times):
+        gen_1()
+        legs.append(leg_max_val_index_1)
+        exes.append(exe_max_val_index_1)
+        leg_max_val_index_1 = []
+        exe_max_val_index_1 = []
+        people_not_voted = 100
+        leg_votes = []
+        leg_counts = []
+        exe_votes = []
+        exe_counts = []
+        gen_1_wins = []
+        new_leg_votes = []
+        new_exe_votes = []
+        gen_previous_parents = []
+        gen_parents = []
+        vetoed = False
+        current_gen = 0
+        
+test(50)
+print("legs")
+for i in legs:
+    print(i)
+print("exes")
+for i in exes:
+    print(i)
