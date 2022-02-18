@@ -24,7 +24,7 @@ import random
 #    if it is unconstitutional, legislative has to make a new law
 
 # ADDITIONAL NOTES - may or may not actually implement
-#   - another voting session or the VP instead of a randint for the tiebreaker
+#   - another voting session instead of a randint for the tiebreaker
 #   - a set amount of laws per generation - manual input or a set amount can be built in
 #   - go through entire legislative process rather than just simple voting
 #   - full political compass; left-right and libertarian-authoritarian
@@ -36,9 +36,10 @@ import random
 #   - the parents will have a 2 out of 3 chance of voting the same every generation.
 #   - otherwise they will randomly choose every time.
 #   - media influence can skew the voting by a certain amount - manual input
+#   - law creation is skewed toward the position of the legislative, not just random from their side
 
 # IMPLEMENTING CURRENTLY
-#   - law creation is skewed toward the position of the legislative, not just random from their side
+
 
 # media influence custom random function with skew
 def skew(influence, range1, range2):    # influence should be a float between -1 and 1, including 0; type should be a string, either "bool" or "int", range1 and range2 should form the range that should be randomly picked from
@@ -93,14 +94,18 @@ def gen_1():
         leg_counts.append(count)    # append that to the list
     leg_max_val = max(leg_counts)   # finds the one they voted for the most
     leg_max_val_index_1 = [i for i in range(len(leg_counts)) if leg_counts[i] == leg_max_val]   # this indexes the maximum value(s), which i use to find what the largest vote was for
-    # this narrows it down to one winner incase there's a tie
-    for i in range(len(leg_max_val_index_1)):       # for the length of the list of max value(s)
-        while len(leg_max_val_index_1) > 1:         # while it's more than one
-            delete = bool(random.getrandbits(1))    # delete = True / False
-            if delete == True:                      # if delete == True
-                del leg_max_val_index_1[i]          # deletes the first value in the list
-            else:                                   # if delete != True
-                del leg_max_val_index_1[i - 1]      # deletes the last value in the list
+    # this narrows it down to one winner if there's a tie
+    while len(leg_max_val_index_1) > 1:
+        people_not_voted = 100
+        for i in range(people_not_voted):
+            tie_vote = skew(influence, 0, len(leg_max_val_index_1)-1)
+            tiebreaker.append(tie_vote)
+        for i in range(0, len(leg_max_val_index_1)-1):
+            tie_counts.append(tiebreaker.count(i))
+        leg_max_val = max(tie_counts)
+        leg_max_val_index_1 = [i for i in range(len(tie_counts)) if tie_counts[i] == leg_max_val]
+        tiebreaker.clear()
+        tie_counts.clear()
     people_not_voted = 100      # resets the people for the next voting session
     # this makes the people vote for the executive branch
     while people_not_voted > 0:                         # while any amount of people havent voted
@@ -120,21 +125,25 @@ def gen_1():
             exe_counts.append(count)        # append that to the list
     exe_max_val = max(exe_counts)           # finds the one they voted for most
     exe_max_val_index_1 = [i for i in range(len(exe_counts)) if exe_counts[i] == exe_max_val]   # this indexes the maximum value(s), which i use to find what the largest vote was for
-    # this narrows it down to one winner incase there's a tie
-    for i in range(len(exe_max_val_index_1)):       # for the length of the list of max value(s)
-        while len(exe_max_val_index_1) > 1:         # while it's more than one
-            delete = bool(random.getrandbits(1))    # delete = True / False
-            if delete == True:                      # if delete == True
-                del exe_max_val_index_1[i]          # deletes the first value in the list
-            else:                                   # if delete != True
-                del exe_max_val_index_1[i - 1]      # deletes the last value in the list
+    # this narrows it down to one winner if there's a tie
+    tiebreaker = []
+    tie_counts = []
+    while len(exe_max_val_index_1) > 1:
+        people_not_voted = 100
+        for i in range(people_not_voted):
+            tie_vote = skew(influence, 0, len(exe_max_val_index_1)-1)
+            tiebreaker.append(tie_vote)
+        for i in range(0, len(exe_max_val_index_1)-1):
+            tie_counts.append(tiebreaker.count(i))
+        exe_max_val = max(tie_counts)
+        exe_max_val_index_1 = [i for i in range(len(tie_counts)) if tie_counts[i] == exe_max_val]
+        tiebreaker.clear()
+        tie_counts.clear()
     # since the right side of the spectrum starts with 5, using the index doesn't work unless the code adds the 5 in here to correct it
     if 0 <= leg_max_val_index_1[0] <= 4:    # if the legislative vote is 0 through 4
         exe_max_val_index_1[0] += 5         # add 5 to the index
-    # resets these lists so they can be reused
     leg_counts.clear()
     exe_counts.clear()
-    # resets this variable so it can be reused
     people_not_voted = 100
     return leg_max_val_index_1, exe_max_val_index_1
 
@@ -186,13 +195,17 @@ def gen_2():
     leg_max_val = max(leg_counts)
     leg_max_val_index_2 = [i for i in range(len(leg_counts)) if leg_counts[i] == leg_max_val]
 
-    for i in range(len(leg_max_val_index_2)):
-        while len(leg_max_val_index_2) > 1:
-            delete = bool(random.getrandbits(1))
-            if delete == True:
-                del leg_max_val_index_2[i]
-            else:
-                del leg_max_val_index_2[i - 1]
+    while len(leg_max_val_index_2) > 1:
+        people_not_voted = 100
+        for i in range(people_not_voted):
+            tie_vote = skew(influence, 0, len(leg_max_val_index_2)-1)
+            tiebreaker.append(tie_vote)
+        for i in range(0, len(leg_max_val_index_2)-1):
+            tie_counts.append(tiebreaker.count(i))
+        leg_max_val = max(tie_counts)
+        leg_max_val_index_2 = [i for i in range(len(tie_counts)) if tie_counts[i] == leg_max_val]
+        tiebreaker.clear()
+        tie_counts.clear()
 
     people_not_voted = 100
 
@@ -245,7 +258,7 @@ def gen_2():
         for i in new_exe_votes:                             # for each item in the new votes list
             exe_votes.append(i)                             # appends it to the votes list
 
-    if 0 <= leg_max_val_index_1[0] <= 4:
+    if 0 <= leg_max_val_index_2[0] <= 4:
         for i in range(5, 10):
             count = exe_votes.count(i)
             exe_counts.append(count)
@@ -257,13 +270,19 @@ def gen_2():
     exe_max_val = max(exe_counts)
     exe_max_val_index_2 = [i for i in range(len(exe_counts)) if exe_counts[i] == exe_max_val]
 
-    for i in range(len(exe_max_val_index_2)):
-        while len(exe_max_val_index_2) > 1:
-            delete = bool(random.getrandbits(1))
-            if delete == True:
-                del exe_max_val_index_2[i]
-            else:
-                del exe_max_val_index_2[i - 1]
+    tiebreaker = []
+    tie_counts = []
+    while len(exe_max_val_index_2) > 1:
+        people_not_voted = 100
+        for i in range(people_not_voted):
+            tie_vote = skew(influence, 0, len(exe_max_val_index_2)-1)
+            tiebreaker.append(tie_vote)
+        for i in range(0, len(exe_max_val_index_2)-1):
+            tie_counts.append(tiebreaker.count(i))
+        exe_max_val = max(tie_counts)
+        exe_max_val_index_2 = [i for i in range(len(tie_counts)) if tie_counts[i] == exe_max_val]
+        tiebreaker.clear()
+        tie_counts.clear()
 
     if 0 <= leg_max_val_index_2[0] <= 4:
         exe_max_val_index_2[0] += 5
@@ -327,17 +346,23 @@ def gen_3():
     global leg_max_val_index_3
     leg_max_val_index_3 = [i for i in range(len(leg_counts)) if leg_counts[i] == leg_max_val]
 
-    for i in range(len(leg_max_val_index_3)):
-        while len(leg_max_val_index_3) > 1:
-            delete = bool(random.getrandbits(1))
-            if delete == True:
-                del leg_max_val_index_3[i]
-            else:
-                del leg_max_val_index_3[i - 1]
+    tiebreaker = []
+    tie_counts = []
+    while len(leg_max_val_index_3) > 1:
+        people_not_voted = 100
+        for i in range(people_not_voted):
+            tie_vote = skew(influence, 0, len(exe_max_val_index_3)-1)
+            tiebreaker.append(tie_vote)
+        for i in range(0, len(exe_max_val_index_3)-1):
+            tie_counts.append(tiebreaker.count(i))
+        exe_max_val = max(tie_counts)
+        exe_max_val_index_3 = [i for i in range(len(tie_counts)) if tie_counts[i] == exe_max_val]
+        tiebreaker.clear()
+        tie_counts.clear()
 
     people_not_voted = 100
                 
-    if 0 <= leg_max_val_index_2[0] <= 4:
+    if 0 <= leg_max_val_index_3[0] <= 4:
         for i in range(people_not_voted):
             x = int(exe_votes[i])
             if gen_parents[i] == 0:
@@ -395,16 +420,24 @@ def gen_3():
             exe_counts.append(count)
 
     exe_max_val = max(exe_counts)
-    global exe_max_val_index_3
     exe_max_val_index_3 = [i for i in range(len(exe_counts)) if exe_counts[i] == exe_max_val]
 
-    for i in range(len(exe_max_val_index_3)):
-        while len(exe_max_val_index_3) > 1:
-            delete = bool(random.getrandbits(1))
-            if delete == True:
-                del exe_max_val_index_3[i]
-            else:
-                del exe_max_val_index_3[i - 1]
+    tiebreaker = []
+    tie_counts = []
+    while len(exe_max_val_index_3) > 1:
+        people_not_voted = 100
+        for i in range(people_not_voted):
+            tie_vote = skew(influence, 0, len(exe_max_val_index_3)-1)
+            if 0 <= leg_max_val_index_3[0] <= 4:
+                tiebreaker.append(tie_vote + 5)
+        if 0 <= leg_max_val_index_3[0] <= 4:
+            for i in range(5, 10):
+                tie_counts.append(tiebreaker.count(i))
+        else:
+            for i in range(0, 5):
+                tie_counts.append(tiebreaker.count(i))
+        exe_max_val = max(tie_counts)
+        exe_max_val_index_3 = [i for i in range(len(tie_counts)) if tie_counts[i] == exe_max_val]
 
     if 0 <= leg_max_val_index_3[0] <= 4:
         exe_max_val_index_3[0] += 5
@@ -565,10 +598,10 @@ def lawmaking(LEG, EXE):
                     vetoed = False                      # unvetoed
                     print("unvetoed")
                     jud_func()                          # continue on to the judicial branch
-            if continue_current_law == True:        # if they're supposed to continue with this law and make it again but more centrist
-                previous_law = law                  # this law becomes the previous law
+            if continue_current_law == True:            # if they're supposed to continue with this law and make it again but more centrist
+                previous_law = law                      # this law becomes the previous law
                 print("new law should be made now")
-                law_func()                          # they'll make a new law with the previous one in mind
+                law_func()                              # they'll make a new law with the previous one in mind
         else:                                           # if the law was not vetoed
             jud_func()                                  # continue on to the judicial branch
     # constants
