@@ -24,7 +24,6 @@ import random
 #    if it is unconstitutional, legislative has to make a new law
 
 # ADDITIONAL NOTES - may or may not actually implement
-#   - another voting session instead of a randint for the tiebreaker
 #   - a set amount of laws per generation - manual input or a set amount can be built in
 #   - go through entire legislative process rather than just simple voting
 #   - full political compass; left-right and libertarian-authoritarian
@@ -39,7 +38,7 @@ import random
 #   - law creation is skewed toward the position of the legislative, not just random from their side
 
 # IMPLEMENTING CURRENTLY
-
+#   - another voting session instead of a randint for the tiebreaker
 
 # media influence custom random function with skew
 def skew(influence, range1, range2):    # influence should be a float between -1 and 1, including 0; type should be a string, either "bool" or "int", range1 and range2 should form the range that should be randomly picked from
