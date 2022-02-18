@@ -31,29 +31,24 @@ import random
 # the parents will survive 2 generations.
 # the parents will have a 2 out of 3 chance of voting the same every generation.
 #    otherwise they will randomly choose every time.
-
-    # IMPLEMENTING CURRENTLY
 # media influence can skew the voting by a certain amount - manual input
 
+    # IMPLEMENTING CURRENTLY
+
+
 # media influence custom random function with skew
-def skew(influence, type, range1, range2):    # influence should be a float between -1 and 1, including 0; type should be a string, either "bool" or "int", range1 and range2 should form the range that should be randomly picked from
-    if type == "bool":
-        skew_bool = 0.0
-        skew_bool += influence
-        skew_bool = int(skew_bool)
-        return skew_bool
-    elif type == "int":
-        skew_int = random.randint(range1, range2)
-        if influence > 0 and skew_int != range2:
-            skew_int += influence * (range2 - 1)
-        elif influence < 0 and skew_int != range1:
-            skew_int += influence * (range1 + 1)
-        if skew_int < range1:
-            skew_int = range1
-        elif skew_int > range2:
-            skew_int = range2
-        skew_int = int(skew_int)
-        return skew_int
+def skew(influence, range1, range2):    # influence should be a float between -1 and 1, including 0; type should be a string, either "bool" or "int", range1 and range2 should form the range that should be randomly picked from
+    skew_int = random.randint(range1, range2)   # gets a random number in the range
+    if influence > 0 and skew_int != range2:    # if the influence leans right
+        skew_int += influence * (range2 - 1)    # multiply the influence times one less than the end of the range
+    elif influence < 0 and skew_int != range1:  # otherwise, if the influence leans left
+        skew_int += influence * (range1 + 1)    # multiply the influence times one more than the start of the range
+    if skew_int < range1:                       # if this number is less than the smallest number in the range
+        skew_int = range1                       # it becomes the smallest number in the range
+    elif skew_int > range2:                     # otherwise, if this number is more than the largest number in the range
+        skew_int = range2                       # it becomes the largest number in the range
+    skew_int = int(skew_int)                    # rounds the float down
+    return skew_int
 
 people_not_voted = 100
 leg_votes = []
@@ -74,7 +69,6 @@ exe_max_val_index_2 = []
 leg_max_val_index_3 = []
 exe_max_val_index_3 = []
 
-
     # GEN 1
 def gen_1():
     global people_not_voted
@@ -86,7 +80,7 @@ def gen_1():
     global exe_max_val_index_1
     # this makes the people vote for the legislative branch
     while people_not_voted > 0:                     # while any amount of people havent voted
-        choice = skew(influence, "int", 0, 9)       # have them vote 0-9
+        choice = skew(influence, 0, 9)       # have them vote 0-9
         leg_votes.append(choice)                    # append their choice to the votes list
         people_not_voted -= 1                       # subtract one person because they just voted
     # this finds out how many people voted for each option
@@ -106,7 +100,7 @@ def gen_1():
     people_not_voted = 100      # resets the people for the next voting session
     # this makes the people vote for the executive branch
     while people_not_voted > 0:                         # while any amount of people havent voted
-        choice = skew(influence, "int", 0, 4)           # the people vote for the executive 0 through 4
+        choice = skew(influence, 0, 4)           # the people vote for the executive 0 through 4
         if 0 < leg_max_val_index_1[0] < 5:              # if the legislative vote is 0 through 4
             choice += 5                                 # the people add 5 to their votes, making them actually vote for the executive 5 through 9
         exe_votes.append(choice)                        # appends their choice to the votes list
@@ -162,7 +156,7 @@ def gen_2():
             else:                               # if the parent relationship was good,
                 choice = x                      # the choice is what the parent chose
         else:                                   # if the person will not vote based on their parents
-            choice = skew(influence, "int", 0, 9)   # have them vote 0-9
+            choice = skew(influence, 0, 9)   # have them vote 0-9
             parent_score = random.randint(0, 1) # determines whether their relationship with their parent is good or not (makes indexing correct)
         normalities.append(normality)           # fills this list with normality scores
         new_leg_votes.append(choice)            # makes a list of the choices without resetting leg_votes
@@ -174,7 +168,7 @@ def gen_2():
         if research == 0 or research == 1:              # if they will not research
             parent_choice = leg_votes[i]                # they vote for the same thing as they voted for last year
         else:                                           # otherwise if they will research
-            parent_choice = skew(influence, "int", 0, 9)       # have them vote 0-9
+            parent_choice = skew(influence, 0, 9)       # have them vote 0-9
         new_leg_votes.append(parent_choice)             # appends their choice to new_leg_votes
         researchers.append(research)                    # fills this list with research scores
     leg_votes.clear()                                   # clears the old votes away
@@ -210,14 +204,14 @@ def gen_2():
                 else:                                   # if the parent relationship was not bad,
                     choice = x                          # the choice is what the parent chose
             else:                                       # if the person will not vote based on their parents
-                choice = skew(influence, "int", 5, 9)   # the person chooses randomly
+                choice = skew(influence, 5, 9)   # the person chooses randomly
             new_exe_votes.append(choice)                    # makes a list of the choices without resetting leg_votes
         # the parents are still alive so they also vote
         for i in range(len(gen_parents)):                   # for each parent
             if researchers[i] == 0 or researchers[i] == 1:              # if they will not research
                 parent_choice = exe_votes[i]                # they vote for the same thing as they voted for last year
             else:                                           # otherwise
-                parent_choice = skew(influence, "int", 5, 9)   # they vote randomly
+                parent_choice = skew(influence, 5, 9)   # they vote randomly
             new_exe_votes.append(parent_choice)             # appends their choice to new_leg_votes
         exe_votes.clear()                                   # clears the old votes away
         for i in new_exe_votes:                             # for each item in the new votes list
@@ -234,14 +228,14 @@ def gen_2():
                 else:                                   # if the parent relationship was not bad,
                     choice = x                          # the choice is what the parent chose
             else:                                       # if the person will not vote based on their parents
-                choice = skew(influence, "int", 0, 4)  # the person chooses randomly
+                choice = skew(influence, 0, 4)  # the person chooses randomly
         new_exe_votes.append(choice)                    # makes a list of the choices without resetting leg_votes
         # the parents are still alive so they also vote
         for i in range(len(gen_parents)):                        # for each parent
             if research == 0 or 1:                          # if they will not research
                 parent_choice = exe_votes[i]                # they vote for the same thing as they voted for last year
             else:                                           # otherwise
-                parent_choice = skew(influence, "int", 0, 4)   # they vote randomly
+                parent_choice = skew(influence, 0, 4)   # they vote randomly
             new_exe_votes.append(parent_choice)             # appends their choice to new_leg_votes
         exe_votes.clear()                                   # clears the old votes away
         for i in new_exe_votes:                             # for each item in the new votes list
@@ -305,7 +299,7 @@ def gen_3():
                 choice = x
         else:
             parent_score = 6
-            choice = skew(influence, "int", 0, 9)
+            choice = skew(influence, 0, 9)
         normalities.append(normality)
         new_leg_votes.append(choice)
         gen_parents.append(parent_score)
@@ -315,7 +309,7 @@ def gen_3():
         if research == 0 or research == 1:
             parent_choice = leg_votes[i]
         else:
-            parent_choice = skew(influence, "int", 0, 9)
+            parent_choice = skew(influence, 0, 9)
         new_leg_votes.append(parent_choice)
         researchers.append(research)
     leg_votes.clear()
@@ -350,14 +344,14 @@ def gen_3():
             elif gen_parents[i] == 1:
                 choice = x
             else:
-                choice = skew(influence, "int", 5, 9)
+                choice = skew(influence, 5, 9)
             new_exe_votes.append(choice)
 
         for i in range(len(gen_parents)):
             if researchers[i] == 0 or researchers[i] == 1:
                 parent_choice = exe_votes[i]
             else:
-                parent_choice = skew(influence, "int", 5, 9)
+                parent_choice = skew(influence, 5, 9)
             new_exe_votes.append(parent_choice)
         exe_votes.clear()
         for i in new_exe_votes:
@@ -373,14 +367,14 @@ def gen_3():
             elif gen_parents[i] == 1:
                 choice = x
             else:
-                choice = skew(influence, "int", 0, 4)
+                choice = skew(influence, 0, 4)
             new_exe_votes.append(choice)
 
         for i in range(len(gen_parents)):
             if researchers[i] == 0 or researchers[i] == 1:
                 parent_choice = exe_votes[i]
             else:
-                parent_choice = skew(influence, "int", 0, 4)
+                parent_choice = skew(influence, 0, 4)
             new_exe_votes.append(parent_choice)
         exe_votes.clear()
         for i in new_exe_votes:
@@ -619,7 +613,8 @@ def fail_check():
     else:                       # otherwise
         fails.append(current_gen)   # tells the position of the failure(s)
 
-influence = -0.9
+# starts the functions, prints out the info from the generation, lawmaking, and from fail_check
+influence = 0
 successes = []
 fails = []
 generations = [1, 2]
