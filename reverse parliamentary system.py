@@ -1,40 +1,44 @@
 import random
 
-    # FIRST GENERATION OF PEOPLE
-# these people will randomly choose a legislature between all 10 example parties
-# then the code will calculate who won and have the people vote on the executive branch from the other side of the political spectrum.
-# the code will finally print the parties who won each house.
+# FIRST GENERATION OF PEOPLE
+#    these people will randomly choose a legislature between all 10 example parties
+#    then the code will calculate who won and have the people vote on the executive branch from the other side of the political spectrum.
+#    the code will finally print the parties who won each house.
 
-    # SECOND GEN
-# these people are either going to vote exactly like their parents did or exactly
-# the opposite 3/4 of the time, the other 1/4 will vote randomly. this will be determined by a boolean decision to see if their parents
-# were good or not.
-# same things are printed out
+# SECOND GEN
+#    will vote like or against their parents 3/4 of the time, the other 1/4 will vote randomly. this will be determined by a boolean decision to see if the relationship with their parents was good or not.
+#    same things are printed out
 
-    # THIRD GEN
-# these people will have the same decision up there, but it will depend on whether
-# their grandparents were bad too. if their grandparents were bad, then there is a 2 out
-# of 3 chance that their parents will have been bad too.
-# then the boolean of whether they are voting the same or the opposite of their parents
-# same things are printed out
+# THIRD GEN
+#    these people will have the same decision as second gen, but it will depend on whether their grandparents were bad too. if their grandparents were bad, then there is a 2/3 chance that their parents will have been bad too.
+#    then the boolean of whether they are voting the same or the opposite of their parents
+#    same things are printed out
 
-    # ADDITIONAL NOTES - may or may not actually implement
-# law creation is skewed toward the position of the legislative 
-# another voting session or the VP instead of a randint for the tiebreaker
-# a set amount of laws per generation - manual input or a set amount can be built in
-# go through entire legislative process rather than just simple voting
-# full political compass; left-right and libertarian-authoritarian
-# get rid of global variables
+# LAWMAKING
+#    the legislative makes a law aligning with their ideals, left or right
+#    executive decides whether that law is close enough to their ideals, left or right
+#    if vetoed, legislative decides whether to override or not
+#    if the law has been vetoed and not overridden then legislative makes a new law, a little further from their own ideals
+#    if the law has been either not vetoed or vetoed and then overridden, it goes to the judicial branch, who have a similar system to that of the executive, except their side is absolute centrist
+#    if the law is constitutional, lawmaking ends
+#    if it is unconstitutional, legislative has to make a new law
 
-    # IMPLEMENTED ADDITIONAL NOTES
-# more_gens() will have parameter gens, set it equal to the number of gens to test minus one - manual input
-# the parents will survive 2 generations.
-# the parents will have a 2 out of 3 chance of voting the same every generation.
-#    otherwise they will randomly choose every time.
-# media influence can skew the voting by a certain amount - manual input
+# ADDITIONAL NOTES - may or may not actually implement
+#   - another voting session or the VP instead of a randint for the tiebreaker
+#   - a set amount of laws per generation - manual input or a set amount can be built in
+#   - go through entire legislative process rather than just simple voting
+#   - full political compass; left-right and libertarian-authoritarian
+#   - get rid of global variables
 
-    # IMPLEMENTING CURRENTLY
+# IMPLEMENTED ADDITIONAL NOTES
+#   - more_gens() will have parameter gens, set it equal to the number of gens to test minus one - manual input
+#   - the parents will survive 2 generations.
+#   - the parents will have a 2 out of 3 chance of voting the same every generation.
+#   - otherwise they will randomly choose every time.
+#   - media influence can skew the voting by a certain amount - manual input
 
+# IMPLEMENTING CURRENTLY
+#   - law creation is skewed toward the position of the legislative, not just random from their side
 
 # media influence custom random function with skew
 def skew(influence, range1, range2):    # influence should be a float between -1 and 1, including 0; type should be a string, either "bool" or "int", range1 and range2 should form the range that should be randomly picked from
@@ -444,21 +448,21 @@ def lawmaking(LEG, EXE):
         # makes the law
         if previous_law == 10:              # if there is no previous law
             if type == "A":                 # and if LEG is 0 through 4
-                law = random.randint(0,4)   # they make a law that is 0 through 4
+                law = skew((LEG-5)/10, 0, 4)    # they make a law that is 0 through 4 
             else:                           # and if LEG is not 0 through 4
-                law = random.randint(5,9)   # they make a law that is 5 through 9
+                law = skew((LEG-5)/10, 5, 9)    # they make a law that is 5 through 9 
         elif previous_law == 9:             # if the previous law was 9
-            law = random.randint(5,8)       # they make a law that is 5 through 8
+            law = skew((LEG-5)/10, 5, 8)       # they make a law that is 5 through 8
         elif previous_law == 8:             # if the previous law was 8
-            law = random.randint(5,7)       # they make a law that is 5 through 7
+            law = skew((LEG-5)/10, 5, 7)       # they make a law that is 5 through 7
         elif previous_law == 7:             # if the previous law was 7
-            law = random.randint(5,6)       # they make a law that is 5 through 6
+            law = skew((LEG-5)/10, 5, 6)       # they make a law that is 5 through 6
         elif previous_law == 6:             # if the previous law was 6
             law = 5                         # they make a law that is 5
         elif previous_law == 5:             # if the previous law was 5
             law_votes_4 = []                # makes a list for votes
             for i in range(535):            # each person in the legislature
-                law_vote_4 = random.randint(0,1)    # votes either 0 or 1
+                law_vote_4 = skew((LEG-5)/10, 0, 1)    # votes either 0 or 1
                 law_votes_4.append(law_vote_4)  # appends the vote to the list of votes
                 if law_votes_4.count(0) > law_votes_4.count(1):   # if there are more votes for 0 than for 1
                     law = 4                 # they make a law that is 4
@@ -468,7 +472,7 @@ def lawmaking(LEG, EXE):
         elif previous_law == 4:             # if the previous law was 4
             law_votes_5 = []                # make a list for votes
             for i in range(535):            # each person in the legislature
-                law_vote_5 = random.randint(0,1)    # votes either 0 or 1
+                law_vote_5 = skew((LEG-5)/10, 0, 1)    # votes either 0 or 1
                 law_votes_5.append(law_vote_5)  # appends the vote to the list of votes
                 if law_votes_5.count(0) > law_votes_5.count(1):   # if there are more votes for 0 than for 1
                     law = 5                 # they make a law that is 5
@@ -478,11 +482,11 @@ def lawmaking(LEG, EXE):
         elif previous_law == 3:             # if the previous law was 3
             law = 4                         # they make a law that is 4
         elif previous_law == 2:             # if the previous law was 2
-            law = random.randint(3,4)       # they make a law that is 3 through 4
+            law = skew((LEG-5)/10, 3, 4)       # they make a law that is 3 through 4
         elif previous_law == 1:             # if the previous law was 1
-            law = random.randint(2,4)       # they make a law that is 2 through 4
+            law = skew((LEG-5)/10, 2, 4)       # they make a law that is 2 through 4
         elif previous_law == 0:             # if the previous law was 0
-            law = random.randint(1,4)       # they make a law that is 1 through 4
+            law = skew((LEG-5)/10, 1, 4)       # they make a law that is 1 through 4
         # decides where EXE draws the line based on their position and draw_line
         exe_line = EXE + draw_line      # EXE position plus or minus 5
         # vetos or passes law based on exe_line
@@ -500,7 +504,7 @@ def lawmaking(LEG, EXE):
             print("Law: ", law, "\n", "EXE: ", EXE, "\n", "PASSED") # prints the law, the EXE pos, and that it was passed
         else:
             print("Law: ", law, "\n", "EXE: ", EXE, "\n", "VETOED") # prints the law, the EXE pos, and that it was vetoed
-        unveto()
+        override()
 
     def jud_func():
         global constitutional
@@ -546,7 +550,7 @@ def lawmaking(LEG, EXE):
             constitutional = True
             print("law constitutional")
 
-    def unveto():
+    def override():
         global vetoed
         nonlocal previous_law
         nonlocal continue_current_law
